@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import User from './user';
 import '../App.css'; // Update the path to point to the correct location
 
 const LoginAdmin = () => {
@@ -24,7 +23,7 @@ const LoginAdmin = () => {
     try {
       const response = await axios.post(url, formData);
       setMessage(response.data.status === 'success' ? 'Login successful!' : 'Login failed.');
-      navigate('/user'); // Navigate to the user page only on successful login
+      navigate('/admindashboard'); // Navigate to the user page only on successful login
     } catch (error) {
       setMessage('An error occurred.');
     }

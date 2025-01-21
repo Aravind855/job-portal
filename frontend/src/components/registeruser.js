@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../App.css'; // Update the path to point to the correct location
+import { useNavigate } from 'react-router-dom';
 
 const RegisterUser = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -19,6 +21,7 @@ const RegisterUser = () => {
     try {
       const response = await axios.post(url, formData);
       setMessage(response.data.status === 'success' ? 'Registration successful!' : 'Registration failed.');
+      navigate('/login-user'); // Navigate to the user page only on successful registration
     } catch (error) {
       setMessage('An error occurred.');
     }

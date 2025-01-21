@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-j8@wh*m$*#&so7y#k+)@#$vy$=3bvqn%lw18-6s-(wpsyw(q$&
 DEBUG = True
 
 ALLOWED_HOSTS = []
+CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
 
 # Application definition
@@ -52,14 +53,19 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
+
 
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',  # Example: React development server
-    'https://your-frontend-domain.com',
 ]
-
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'authorization',
+    'x-csrftoken',
+    'x-requested-with',
+]
 ROOT_URLCONF = 'jobs.urls'
 
 TEMPLATES = [
@@ -132,3 +138,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOW_CREDENTIALS = True

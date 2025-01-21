@@ -68,19 +68,86 @@ def login_user(request):
 
 
 
-@csrf_exempt  # Exempts this view from CSRF protection
-def admin_home(request):
-    if request.method == 'POST':  # Handles form submission
-        form = JobForm(request.POST)
-        if form.is_valid():
-            form.save()  # Saves the job details to the database
-            return JsonResponse({'success': True, 'message': 'Job details saved successfully!'})
-        else:
-            return JsonResponse({'success': False, 'errors': form.errors})
+@csrf_exempt
+def post_job(request):
+    """
+    API to post a new job to the MongoDB collection.
+    """
+    if request.method == "POST":
+        try:
+            # Parse the request body
+            body = json.loads(request.body.decode("utf-8"))
+            job = {
+                "id": job_collection.count_documents({}) + 1,  # Auto-generate ID
+                "Job title": body.get("title"),
+                "company": body.get("company"),
+                "location": body.get("location"),
+                "qualification": body.get("qualification"),
+                # "applicants": body.get("applicants", 0),  # Defaults to 0 if not provided
+                "job_description": body.get("job_description"),
+                "required_skills_and_qualifications": body.get("required_skills_and_qualifications"),
+                "salary_range": body.get("salary_range"),
+                }
+
+            # Insert the job into the collection
+            job_collection.insert_one(job)
+
+            return JsonResponse({"status": "success", "message": "Job posted successfully!"}, status=201)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
     
-    # For GET requests, display the job upload form
-    form = JobForm()
-    return render(request, 'admin_home.html', {'form': form})
+
+@csrf_exempt
+def get_jobs(request):
+    """
+    API to get all jobs from the MongoDB collection.
+    """
+    if request.method == "GET":
+        try:
+            # Fetch all jobs from the collection
+            jobs = list(job_collection.find({}))
+
+            if not jobs:
+                return JsonResponse({"status": "success", "message": "No jobs uploaded."}, status=200)
+
+            # Convert ObjectId to string for each job
+            for job in jobs:
+                job["_id"] = str(job["_id"])
+                job["job_title"] = job.pop("Job title")
+
+            return JsonResponse({"status": "success", "jobs": jobs}, status=200)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+    
+@csrf_exempt
+def fetch_jobs(request):
+    """
+    API to get all jobs from the MongoDB collection.
+    """
+    if request.method == "GET":
+        try:
+            # Fetch all jobs from the collection
+            jobs = list(job_collection.find({}))
+
+            if not jobs:
+                return JsonResponse({"status": "success", "message": "No jobs uploaded."}, status=200)
+
+            # Convert ObjectId to string for each job
+            for job in jobs:
+                job["_id"] = str(job["_id"])
+                job["job_title"] = job.pop("Job title")
+
+            return JsonResponse({"status": "success", "jobs": jobs}, status=200)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+    
+
         
 @csrf_exempt
 def user(request):
