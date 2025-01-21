@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from bson.objectid import ObjectId
 
+
 # Create your views here.
 from pymongo import MongoClient
 client = MongoClient('mongodb://localhost:27017/')
@@ -65,18 +66,21 @@ def login_user(request):
 
     return JsonResponse({'status': 'failed', 'reason': 'Invalid request method'})
 
-@csrf_exempt    
+
+
+@csrf_exempt  # Exempts this view from CSRF protection
 def admin_home(request):
-        user_type = request.session.get('user_type')
-        print('user',user_type)
-        if user_type == 'admin':
-            if request.method == 'POST':
-                 data = json.loads(request.body)
-                 text = data.get('text')
-                 job_collection.insert_one({'user_type': 'admin', 'text': text})
-                 return JsonResponse({'status': 'success'})
-            return JsonResponse({'status': 'failed'})
-        return JsonResponse({'status': 'failed', 'reason': 'Unauthorized'})
+    if request.method == 'POST':  # Handles form submission
+        form = JobForm(request.POST)
+        if form.is_valid():
+            form.save()  # Saves the job details to the database
+            return JsonResponse({'success': True, 'message': 'Job details saved successfully!'})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    
+    # For GET requests, display the job upload form
+    form = JobForm()
+    return render(request, 'admin_home.html', {'form': form})
         
 @csrf_exempt
 def user(request):
