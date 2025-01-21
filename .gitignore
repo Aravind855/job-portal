@@ -1,2 +1,23 @@
+# Environment variables
 .myenv
-.backend
+/backend/.myenv
+backend/myenv/
+/myenv
+
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Dependency directories
+jspm_packages/
+
+# Ignore migration files
+migrations/
+*/migrations/
+**/migrations/
+**/migrations/*.py
+**/migrations/*.sql
