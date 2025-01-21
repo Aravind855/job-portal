@@ -28,7 +28,8 @@ const User = () => {
 
   return (
     <div>
-      <h2>User Text</h2>
+      <h2>admin Text</h2>
+      <h1>In this page job going to get uploaded job from admin</h1>
       {text ? <p>{text.text}</p> : <p>{message}</p>}
     </div>
   );
