@@ -64,8 +64,9 @@ def login_user(request):
         return JsonResponse({'status': 'failed', 'reason': 'Invalid credentials'})
 
     return JsonResponse({'status': 'failed', 'reason': 'Invalid request method'})
+
 @csrf_exempt    
-def home(request):
+def admin_home(request):
         user_type = request.session.get('user_type')
         print('user',user_type)
         if user_type == 'admin':

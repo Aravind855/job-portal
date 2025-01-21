@@ -21,3 +21,6 @@ migrations/
 **/migrations/
 **/migrations/*.py
 **/migrations/*.sql
+
+backend/jobs/api/__pycache__/urls.cpython-312.pyc
+backend/jobs/api/__pycache__/views.cpython-312.pyc

@@ -7,7 +7,7 @@ urlpatterns = [
     path('register/user/', register_user, name='register_user'),
     path('login/admin/', login_admin, name='login_admin'),
     path('login/user/', login_user, name='login_user'),
-    path('home/', home, name='home'),
+    path('home/', admin_home, name='home'),
     path('user/<str:text_id>/', user, name='user'),
 ]
 
