@@ -13,9 +13,9 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/jobs");
+        const response = await axios.get("http://localhost:8000/jobs/");
         if (response.data.status === "success") {
-          setJobs(response.data.jobs);
+          setJobs(response.data.jobs || []);
         } else {
           setError(response.data.message || "Failed to fetch jobs.");
         }
@@ -118,62 +118,66 @@ const AdminDashboard = () => {
           <p style={{ color: "red" }}>{error}</p>
         ) : (
           <div style={styles.grid}>
-            {jobs.map((job) => (
-              <div
-                key={job._id}
-                style={styles.flashcard}
-                onMouseEnter={(e) =>
-                  e.currentTarget.setAttribute(
-                    "style",
-                    Object.entries({
-                      ...styles.flashcard,
-                      ...styles.flashcardHover,
-                    })
-                      .map(([key, value]) => `${key}:${value}`)
-                      .join(";")
-                  )
-                }
-                onMouseLeave={(e) =>
-                  e.currentTarget.setAttribute(
-                    "style",
-                    Object.entries(styles.flashcard)
-                      .map(([key, value]) => `${key}:${value}`)
-                      .join(";")
-                  )
-                }
-              >
-                <div style={styles.cardHeader}>
-                  <h2 style={styles.cardTitle}>{job.job_title}</h2>
-                </div>
-                <div style={styles.cardContent}>
-                  <p>
-                    <strong>Company:</strong> {job.company}
-                  </p>
-                  <p>
-                    <strong>Location:</strong> {job.location}
-                  </p>
-                  <p>
-                    <strong>Qualification:</strong> {job.qualification}
-                  </p>
-                  <p>
-                    <strong>Skills:</strong> {job.required_skills_and_qualifications}
-                  </p>
-                  <p>
-                    <strong>Salary:</strong> {job.salary_range}
-                  </p>
-                </div>
-                <a
-                  href="#"
-                  style={styles.button}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    alert(`View details for ${job.job_title}`);
-                  }}
+            {jobs.length === 0 ? (
+              <p>No jobs available.</p>
+            ) : (
+              jobs.map((job) => (
+                <div
+                  key={job._id}
+                  style={styles.flashcard}
+                  onMouseEnter={(e) =>
+                    e.currentTarget.setAttribute(
+                      "style",
+                      Object.entries({
+                        ...styles.flashcard,
+                        ...styles.flashcardHover,
+                      })
+                        .map(([key, value]) => `${key}:${value}`)
+                        .join(";")
+                    )
+                  }
+                  onMouseLeave={(e) =>
+                    e.currentTarget.setAttribute(
+                      "style",
+                      Object.entries(styles.flashcard)
+                        .map(([key, value]) => `${key}:${value}`)
+                        .join(";")
+                    )
+                  }
                 >
-                  Edit Details
-                </a>
-              </div>
-            ))}
+                  <div style={styles.cardHeader}>
+                    <h2 style={styles.cardTitle}>{job.job_title}</h2>
+                  </div>
+                  <div style={styles.cardContent}>
+                    <p>
+                      <strong>Company:</strong> {job.company}
+                    </p>
+                    <p>
+                      <strong>Location:</strong> {job.location}
+                    </p>
+                    <p>
+                      <strong>Qualification:</strong> {job.qualification}
+                    </p>
+                    <p>
+                      <strong>Skills:</strong> {job.required_skills_and_qualifications}
+                    </p>
+                    <p>
+                      <strong>Salary:</strong> {job.salary_range}
+                    </p>
+                  </div>
+                  <a
+                    href="#"
+                    style={styles.button}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      alert(`View details for ${job.job_title}`);
+                    }}
+                  >
+                    Edit Details
+                  </a>
+                </div>
+              ))
+            )}
           </div>
         )}
       </div>

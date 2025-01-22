@@ -7,7 +7,7 @@ from bson.objectid import ObjectId
 
 # Create your views here.
 from pymongo import MongoClient
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb+srv://sutgJxLaXWo7gKMR:sutgJxLaXWo7gKMR@cluster0.2ytii.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
 db = client['job-portal']
 info_collection = db['info']
 job_collection = db['jobs']
@@ -16,11 +16,25 @@ job_collection = db['jobs']
 def register_admin(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        username = data.get('username')
+        name = data.get('name')
+        email = data.get('email')
+        mobile = data.get('mobile')
         password = data.get('password')
-        user_type = 'admin'
+        role = data.get('role', 'admin')
 
-        info_collection.insert_one({'username': username, 'password': password, 'user_type': user_type})
+        # Check if email already exists
+        existing_user = info_collection.find_one({'email': email})
+        if existing_user:
+            return JsonResponse({'status': 'failed', 'message': 'Email already registered'})
+
+        # Insert new admin
+        info_collection.insert_one({
+            'name': name,
+            'email': email,
+            'mobile': mobile,
+            'password': password,
+            'role': role
+        })
         return JsonResponse({'status': 'success'})
 
     return JsonResponse({'status': 'failed', 'reason': 'Invalid request method'})
@@ -29,11 +43,25 @@ def register_admin(request):
 def register_user(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        username = data.get('username')
+        name = data.get('name')
+        email = data.get('email')
+        mobile = data.get('mobile')
         password = data.get('password')
-        user_type = 'user'
+        role = data.get('role', 'user')
 
-        info_collection.insert_one({'username': username, 'password': password, 'user_type': user_type})
+        # Check if email already exists
+        existing_user = info_collection.find_one({'email': email})
+        if existing_user:
+            return JsonResponse({'status': 'failed', 'message': 'Email already registered'})
+
+        # Insert new user
+        info_collection.insert_one({
+            'name': name,
+            'email': email,
+            'mobile': mobile,
+            'password': password,
+            'role': role
+        })
         return JsonResponse({'status': 'success'})
 
     return JsonResponse({'status': 'failed', 'reason': 'Invalid request method'})
@@ -42,12 +70,22 @@ def register_user(request):
 def login_admin(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        username = data.get('username')
+        email = data.get('email')
         password = data.get('password')
-        user = info_collection.find_one({'username': username, 'password': password, 'user_type': 'admin'})
+        user = info_collection.find_one({
+            'email': email, 
+            'password': password, 
+            'role': 'admin'
+        })
         if user:
-            request.session['user_type'] = user['user_type']
-            return JsonResponse({'status': 'success'})
+            return JsonResponse({
+                'status': 'success',
+                'user': {
+                    'name': user.get('name'),
+                    'email': user.get('email'),
+                    'role': user.get('role')
+                }
+            })
         return JsonResponse({'status': 'failed', 'reason': 'Invalid credentials'})
 
     return JsonResponse({'status': 'failed', 'reason': 'Invalid request method'})
@@ -56,12 +94,22 @@ def login_admin(request):
 def login_user(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        username = data.get('username')
+        email = data.get('email')
         password = data.get('password')
-        user = info_collection.find_one({'username': username, 'password': password, 'user_type': 'user'})
+        user = info_collection.find_one({
+            'email': email, 
+            'password': password, 
+            'role': 'user'
+        })
         if user:
-            request.session['user_type'] = user['user_type']
-            return JsonResponse({'status': 'success'})
+            return JsonResponse({
+                'status': 'success',
+                'user': {
+                    'name': user.get('name'),
+                    'email': user.get('email'),
+                    'role': user.get('role')
+                }
+            })
         return JsonResponse({'status': 'failed', 'reason': 'Invalid credentials'})
 
     return JsonResponse({'status': 'failed', 'reason': 'Invalid request method'})
