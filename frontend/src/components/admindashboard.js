@@ -162,6 +162,9 @@ const AdminDashboard = () => {
                       <strong>Skills:</strong> {job.required_skills_and_qualifications}
                     </p>
                     <p>
+                      <strong>job_description:</strong> {job.job_description}
+                    </p>
+                    <p>
                       <strong>Salary:</strong> {job.salary_range}
                     </p>
                   </div>

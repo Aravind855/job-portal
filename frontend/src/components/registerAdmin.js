@@ -6,9 +6,13 @@ import Button from './ui/button';
 const RegisterAdmin = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
+    companyName: '',
+    companyDescription: '',
+    companyWebsite: '',
+    companyAddress: '',
+    hiringManagerName: '',
     email: '',
-    mobile: '',
+    phone: '',
     password: '',
   });
   const [error, setError] = useState('');
@@ -54,7 +58,7 @@ const RegisterAdmin = () => {
       borderRadius: '1rem',
       boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
       width: '100%',
-      maxWidth: '400px',
+      maxWidth: '600px',
     },
     title: {
       fontSize: '1.875rem',
@@ -62,6 +66,14 @@ const RegisterAdmin = () => {
       color: '#1a202c',
       marginBottom: '2rem',
       textAlign: 'center',
+    },
+    subtitle: {
+      fontSize: '1.25rem',
+      color: '#4a5568',
+      marginBottom: '1.5rem',
+      marginTop: '2rem',
+      borderBottom: '2px solid #e2e8f0',
+      paddingBottom: '0.5rem',
     },
     formGroup: {
       marginBottom: '1.5rem',
@@ -82,6 +94,17 @@ const RegisterAdmin = () => {
       color: '#1a202c',
       transition: 'border-color 0.2s',
     },
+    textarea: {
+      width: '100%',
+      padding: '0.75rem',
+      borderRadius: '0.5rem',
+      border: '1px solid #e2e8f0',
+      fontSize: '1rem',
+      color: '#1a202c',
+      transition: 'border-color 0.2s',
+      minHeight: '100px',
+      resize: 'vertical',
+    },
     error: {
       color: '#e53e3e',
       marginTop: '0.5rem',
@@ -95,16 +118,69 @@ const RegisterAdmin = () => {
   return (
     <div style={styles.container}>
       <form style={styles.form} onSubmit={handleSubmit}>
-        <h1 style={styles.title}>Sign Up as Employer</h1>
+        <h1 style={styles.title}>Company Registration</h1>
         
+        <h2 style={styles.subtitle}>Company Information</h2>
         <div style={styles.formGroup}>
-          <label style={styles.label} htmlFor="name">Full Name</label>
+          <label style={styles.label} htmlFor="companyName">Company Name</label>
           <input
             style={styles.input}
             type="text"
-            id="name"
-            name="name"
-            value={formData.name}
+            id="companyName"
+            name="companyName"
+            value={formData.companyName}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div style={styles.formGroup}>
+          <label style={styles.label} htmlFor="companyDescription">Company Description</label>
+          <textarea
+            style={styles.textarea}
+            id="companyDescription"
+            name="companyDescription"
+            value={formData.companyDescription}
+            onChange={handleChange}
+            required
+            placeholder="Tell us about your company..."
+          />
+        </div>
+
+        <div style={styles.formGroup}>
+          <label style={styles.label} htmlFor="companyWebsite">Company Website</label>
+          <input
+            style={styles.input}
+            type="url"
+            id="companyWebsite"
+            name="companyWebsite"
+            value={formData.companyWebsite}
+            onChange={handleChange}
+            placeholder="https://example.com"
+          />
+        </div>
+
+        <div style={styles.formGroup}>
+          <label style={styles.label} htmlFor="companyAddress">Company Address</label>
+          <textarea
+            style={styles.textarea}
+            id="companyAddress"
+            name="companyAddress"
+            value={formData.companyAddress}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <h2 style={styles.subtitle}>Hiring Manager Information</h2>
+        <div style={styles.formGroup}>
+          <label style={styles.label} htmlFor="hiringManagerName">Hiring Manager Name</label>
+          <input
+            style={styles.input}
+            type="text"
+            id="hiringManagerName"
+            name="hiringManagerName"
+            value={formData.hiringManagerName}
             onChange={handleChange}
             required
           />
@@ -124,18 +200,19 @@ const RegisterAdmin = () => {
         </div>
 
         <div style={styles.formGroup}>
-          <label style={styles.label} htmlFor="mobile">Mobile Number</label>
+          <label style={styles.label} htmlFor="phone">Phone Number</label>
           <input
             style={styles.input}
             type="tel"
-            id="mobile"
-            name="mobile"
-            value={formData.mobile}
+            id="phone"
+            name="phone"
+            value={formData.phone}
             onChange={handleChange}
             required
           />
         </div>
 
+        <h2 style={styles.subtitle}>Account Security</h2>
         <div style={styles.formGroup}>
           <label style={styles.label} htmlFor="password">Password</label>
           <input
@@ -153,7 +230,7 @@ const RegisterAdmin = () => {
 
         <div style={styles.buttonContainer}>
           <Button type="submit" style={{ width: '100%' }}>
-            Sign Up
+            Register Company
           </Button>
         </div>
 
