@@ -7,13 +7,32 @@ const AdminDashboard = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [adminData, setAdminData] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if admin is logged in
+    const storedAdminData = localStorage.getItem('adminData');
+    if (!storedAdminData) {
+      navigate('/login-admin');
+      return;
+    }
+
+    setAdminData(JSON.parse(storedAdminData));
+  }, [navigate]);
 
   // Fetch jobs from the backend
   useEffect(() => {
     const fetchJobs = async () => {
+      if (!adminData?.email) return;
+
       try {
-        const response = await axios.get("http://localhost:8000/jobs/");
+        const response = await axios.get("http://localhost:8000/jobs/", {
+          headers: {
+            'X-User-Email': adminData.email
+          }
+        });
+        
         if (response.data.status === "success") {
           setJobs(response.data.jobs || []);
         } else {
@@ -27,7 +46,7 @@ const AdminDashboard = () => {
     };
 
     fetchJobs();
-  }, []);
+  }, [adminData]);
 
   const styles = {
     adminDashboard: {
@@ -50,20 +69,35 @@ const AdminDashboard = () => {
       fontWeight: "bold",
       color: "#1a202c",
     },
+    companyInfo: {
+      marginBottom: "2rem",
+      padding: "1.5rem",
+      backgroundColor: "#fff",
+      borderRadius: "0.75rem",
+      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    },
+    companyName: {
+      fontSize: "1.5rem",
+      fontWeight: "bold",
+      color: "#2d3748",
+      marginBottom: "0.5rem",
+    },
+    companyEmail: {
+      color: "#4a5568",
+    },
     grid: {
       display: "grid",
       gridTemplateColumns: "repeat(1, 1fr)",
       gap: "2rem",
     },
-    flashcard: {
+    card: {
       backgroundColor: "#fff",
       borderRadius: "0.75rem",
       padding: "1.5rem",
       boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
       transition: "transform 0.2s, box-shadow 0.2s",
-      cursor: "pointer",
     },
-    flashcardHover: {
+    cardHover: {
       transform: "scale(1.03)",
       boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
     },
@@ -112,6 +146,13 @@ const AdminDashboard = () => {
           </Button>
         </div>
 
+        {adminData?.company && (
+          <div style={styles.companyInfo}>
+            <h2 style={styles.companyName}>{adminData.company.name}</h2>
+            <p style={styles.companyEmail}>Admin Email: {adminData.email}</p>
+          </div>
+        )}
+
         {loading ? (
           <p>Loading...</p>
         ) : error ? (
@@ -119,18 +160,18 @@ const AdminDashboard = () => {
         ) : (
           <div style={styles.grid}>
             {jobs.length === 0 ? (
-              <p>No jobs available.</p>
+              <p>No jobs posted yet.</p>
             ) : (
               jobs.map((job) => (
                 <div
                   key={job._id}
-                  style={styles.flashcard}
+                  style={styles.card}
                   onMouseEnter={(e) =>
                     e.currentTarget.setAttribute(
                       "style",
                       Object.entries({
-                        ...styles.flashcard,
-                        ...styles.flashcardHover,
+                        ...styles.card,
+                        ...styles.cardHover,
                       })
                         .map(([key, value]) => `${key}:${value}`)
                         .join(";")
@@ -139,7 +180,7 @@ const AdminDashboard = () => {
                   onMouseLeave={(e) =>
                     e.currentTarget.setAttribute(
                       "style",
-                      Object.entries(styles.flashcard)
+                      Object.entries(styles.card)
                         .map(([key, value]) => `${key}:${value}`)
                         .join(";")
                     )
@@ -162,7 +203,7 @@ const AdminDashboard = () => {
                       <strong>Skills:</strong> {job.required_skills_and_qualifications}
                     </p>
                     <p>
-                      <strong>job_description:</strong> {job.job_description}
+                      <strong>Description:</strong> {job.job_description}
                     </p>
                     <p>
                       <strong>Salary:</strong> {job.salary_range}
@@ -173,7 +214,7 @@ const AdminDashboard = () => {
                     style={styles.button}
                     onClick={(e) => {
                       e.preventDefault();
-                      alert(`View details for ${job.job_title}`);
+                      alert(`Edit details for ${job.job_title}`);
                     }}
                   >
                     Edit Details
