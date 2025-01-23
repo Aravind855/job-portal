@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import JobApplicationModal from "./JobApplicationModal";
+import Button from "./ui/button";
 
 const UserDashboard = () => {
   const [jobs, setJobs] = useState([]);
@@ -9,8 +10,8 @@ const UserDashboard = () => {
   const [error, setError] = useState(null);
   const [userData, setUserData] = useState(null);
   const [selectedCompany, setSelectedCompany] = useState(null);
+  const [selectedJob, setSelectedJob] = useState(null);
   const navigate = useNavigate();
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +49,10 @@ const UserDashboard = () => {
     } catch (err) {
       setError("An error occurred while fetching company details.");
     }
+  };
+
+  const handleApplyClick = (job) => {
+    setSelectedJob(job);
   };
 
   const styles = {
@@ -172,6 +177,7 @@ const UserDashboard = () => {
       <div style={styles.container}>
         <div style={styles.header}>
           <h1 style={styles.title}>Job Portal</h1>
+          <Button onClick={() => navigate('/user-profile')}>My Profile</Button>
         </div>
 
         {userData && (
@@ -244,7 +250,7 @@ const UserDashboard = () => {
                     style={styles.button}
                     onClick={(e) => {
                       e.preventDefault();
-                      alert(`Applied for ${job.job_title}`);
+                      handleApplyClick(job);
                     }}
                   >
                     Apply
@@ -303,6 +309,14 @@ const UserDashboard = () => {
               </div>
             </div>
           </div>
+        )}
+
+        {selectedJob && (
+          <JobApplicationModal
+            job={selectedJob}
+            userData={userData}
+            onClose={() => setSelectedJob(null)}
+          />
         )}
       </div>
     </div>

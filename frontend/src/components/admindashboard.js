@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Button from "./ui/button";
+import JobApplicants from "./JobApplicants";
 
 const AdminDashboard = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [adminData, setAdminData] = useState(null);
+  const [selectedJob, setSelectedJob] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -134,6 +136,11 @@ const AdminDashboard = () => {
         gridTemplateColumns: "repeat(3, 1fr)",
       },
     },
+    buttonContainer: {
+      marginTop: "1rem",
+      display: "flex",
+      justifyContent: "flex-end",
+    },
   };
 
   return (
@@ -191,9 +198,6 @@ const AdminDashboard = () => {
                   </div>
                   <div style={styles.cardContent}>
                     <p>
-                      <strong>Company:</strong> {job.company}
-                    </p>
-                    <p>
                       <strong>Location:</strong> {job.location}
                     </p>
                     <p>
@@ -209,20 +213,22 @@ const AdminDashboard = () => {
                       <strong>Salary:</strong> {job.salary_range}
                     </p>
                   </div>
-                  <a
-                    href="#"
-                    style={styles.button}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      alert(`Edit details for ${job.job_title}`);
-                    }}
-                  >
-                    Edit Details
-                  </a>
+                  <div style={styles.buttonContainer}>
+                    <Button onClick={() => setSelectedJob(job)}>
+                      View Applicants
+                    </Button>
+                  </div>
                 </div>
               ))
             )}
           </div>
+        )}
+
+        {selectedJob && (
+          <JobApplicants
+            job={selectedJob}
+            onClose={() => setSelectedJob(null)}
+          />
         )}
       </div>
     </div>

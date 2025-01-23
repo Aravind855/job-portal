@@ -40,16 +40,41 @@ const PostJobs = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log('Submitting job with data:', formData);
+      console.log('Admin data:', adminData);
+
+      if (!adminData?.email) {
+        setError("Admin email not found. Please log in again.");
+        navigate('/login-admin');
+        return;
+      }
+
+      // Transform the data to match backend expectations
+      const jobData = {
+        "Job title": formData.title,  // Note the capital J and space
+        location: formData.location,
+        qualification: formData.qualification,
+        job_description: formData.job_description,
+        required_skills_and_qualifications: formData.required_skills_and_qualifications,
+        salary_range: formData.salary_range
+      };
+
+      console.log('Transformed job data:', jobData);
+
       const response = await axios.post(
         "http://localhost:8000/postjobs/",
-        formData,
+        jobData,
         {
           headers: {
             'X-User-Email': adminData.email,
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          withCredentials: false  // Changed to false since we're not using cookies
         }
       );
+
+      console.log('Response:', response.data);
 
       if (response.data.status === "success") {
         setSuccess("Job posted successfully!");
@@ -70,8 +95,22 @@ const PostJobs = () => {
         setError(response.data.message || "Failed to post job.");
       }
     } catch (err) {
-      console.error('Error details:', err.response?.data || err.message);
-      setError(err.response?.data?.message || "An error occurred while posting the job. Please try again.");
+      console.error('Error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        headers: err.response?.headers,
+        data: err.response?.config?.data
+      });
+      
+      if (err.response?.status === 401) {
+        setError("You are not authenticated. Please log in again.");
+        navigate('/login-admin');
+      } else if (err.response?.status === 500) {
+        setError("Server error. Please try again later.");
+      } else {
+        setError(err.response?.data?.message || "An error occurred while posting the job. Please try again.");
+      }
     }
   };
 
